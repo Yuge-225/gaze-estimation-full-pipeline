@@ -38,6 +38,8 @@ from gaze_utils import (
 from run_calibration import (
     build_calibration_model,
     parse_args as _cal_parse_args,
+    plot_residuals,
+    print_calibration_summary,
     setup_logging,
 )
 
@@ -306,6 +308,10 @@ def main() -> None:
         stride=args.stride,
     )
 
+    model_tag = Path(args.weight).stem
+    print_calibration_summary(cal_inferences, cal_model)
+    plot_residuals(cal_inferences, cal_model, session_dir / f"calibration_{model_tag}_residuals.png")
+
     # ── Phase 2: Validation ───────────────────────────────────────────────
     logger.info("=" * 60)
     logger.info("PHASE 2 — Validation")
@@ -365,7 +371,7 @@ def main() -> None:
 
     compute_and_log_metrics(val_inferences, cal_model, len(val_records))
 
-    plot_path = session_dir / "validation_scatter.png"
+    plot_path = session_dir / f"validation_{model_tag}_scatter.png"
     plot_validation(val_inferences, cal_model, plot_path)
 
 

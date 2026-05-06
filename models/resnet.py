@@ -137,7 +137,7 @@ class Bottleneck(nn.Module):
 class ResNet(nn.Module):
     def __init__(
         self,
-        block: Type[BasicBlock | Bottleneck],
+        block: Type,
         layers: List[int],
         num_classes: int = 1000,
         groups: int = 1,
@@ -188,7 +188,7 @@ class ResNet(nn.Module):
 
     def _make_layer(
         self,
-        block: Type[BasicBlock | Bottleneck],
+        block: Type,
         planes: int,
         blocks: int,
         stride: int = 1,
@@ -270,7 +270,7 @@ def load_filtered_state_dict(model, state_dict):
 
 
 def _resnet(
-    block: Type[BasicBlock],
+    block: Type,
     layers: List[int],
     weights: Optional[ResNet34_Weights],
     progress: bool,

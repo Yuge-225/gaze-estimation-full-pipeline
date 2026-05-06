@@ -69,7 +69,7 @@ def get_dataloader(params, mode="train"):
 
     transform = transforms.Compose(
         [
-            transforms.Resize(448),
+            transforms.Resize((448, 448)),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]

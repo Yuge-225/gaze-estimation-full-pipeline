@@ -60,10 +60,7 @@ All pipeline commands go through `run.sh`:
 # 1. Verify timestamp alignment before running inference
 bash run.sh viz --session GazeData/session_xxx
 
-# 2. Calibration only (inspect residual plot)
-bash run.sh cal --session GazeData/session_xxx --weight weights/resnet34.pt
-
-# 3. Full calibration + validation (recommended)
+# 2. Calibration + Validation — outputs calibration_residuals.png + validation_scatter.png
 bash run.sh val --session GazeData/session_xxx --weight weights/resnet34.pt
 ```
 

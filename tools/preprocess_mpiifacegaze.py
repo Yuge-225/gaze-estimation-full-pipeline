@@ -47,7 +47,7 @@ PARTICIPANTS = [f"p{i:02d}" for i in range(15)]  # p00 – p14
 LABEL_HEADER = "image_path person day filename screen_x screen_y gaze3d gaze2d\n"
 
 
-def gaze3d_to_angles(fc: list[float], gt: list[float]) -> tuple[float, float]:
+def gaze3d_to_angles(fc, gt):
     """
     Convert face-centre fc and gaze-target gt (both in camera coordinates)
     to (yaw, pitch) in radians.
@@ -70,7 +70,7 @@ def gaze3d_to_angles(fc: list[float], gt: list[float]) -> tuple[float, float]:
     return yaw, pitch
 
 
-def parse_annotation_line(line: str) -> dict | None:
+def parse_annotation_line(line: str):
     """
     Parse one line of pXX.txt (28 whitespace-separated tokens).
     Returns None on malformed lines.

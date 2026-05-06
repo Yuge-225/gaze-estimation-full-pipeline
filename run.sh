@@ -5,9 +5,8 @@
 #   bash run.sh <command> --session <path> [--weight <path>] [--dataset <name>] [--stride N] [--skip-ms N] [--verbose]
 #
 # Commands:
-#   viz   Visualizer         — verify timestamp alignment before inference
-#   cal   Calibration only   — fit polynomial gaze model, output residual plot
-#   val   Calibration + Validation (recommended) — full pipeline
+#   viz   Visualizer                  — verify timestamp alignment before inference
+#   val   Calibration + Validation    — full pipeline, outputs residual + scatter plots
 #
 # Options:
 #   --session   Path to session folder (required)
@@ -46,9 +45,9 @@ fi
 
 # First positional argument is the command
 case $1 in
-    viz|cal|val) CMD=$1; shift ;;
+    viz|val) CMD=$1; shift ;;
     *)
-        echo "ERROR: first argument must be a command: viz | cal | val"
+        echo "ERROR: first argument must be a command: viz | val"
         echo "Run 'bash run.sh' with no arguments for usage."
         exit 1
         ;;
@@ -107,16 +106,6 @@ case $CMD in
     viz)
         $PYTHON pipeline/visualizer.py \
             --session      "$SESSION" \
-            --skip-ms      "$SKIP_MS" \
-            --end-trim-ms  "$END_TRIM_MS" \
-            $VERBOSE
-        ;;
-    cal)
-        $PYTHON pipeline/run_calibration.py \
-            --session      "$SESSION" \
-            --weight       "$WEIGHT" \
-            --dataset      "$DATASET" \
-            --stride       "$STRIDE" \
             --skip-ms      "$SKIP_MS" \
             --end-trim-ms  "$END_TRIM_MS" \
             $VERBOSE

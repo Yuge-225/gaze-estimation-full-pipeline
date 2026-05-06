@@ -9,6 +9,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 
 from config import data_config
+from models.resnet import load_filtered_state_dict
 from utils.helpers import get_model, get_dataloader
 
 # Setup logging
@@ -43,6 +44,13 @@ def parse_args():
     parser.add_argument("--alpha", type=float, default=1, help="Regression loss coefficient.")
     parser.add_argument("--lr", type=float, default=0.00001, help="Base learning rate.")
     parser.add_argument("--num-workers", type=int, default=8, help="Number of workers for data loading.")
+    parser.add_argument(
+        "--pretrain",
+        type=str,
+        default="",
+        help="Path to pretrained checkpoint from a different dataset. "
+             "Loads backbone weights only (ignores mismatched fc_yaw/fc_pitch heads).",
+    )
 
     args = parser.parse_args()
 
@@ -73,7 +81,12 @@ def initialize_model(params, device):
     optimizer = torch.optim.Adam(model.parameters(), lr=params.lr)
     start_epoch = 0
 
-    if params.checkpoint:
+    if params.pretrain:
+        pretrain_ckpt = torch.load(params.pretrain, map_location=device)
+        load_filtered_state_dict(model, pretrain_ckpt["model_state_dict"])
+        logging.info(f"Loaded backbone weights from {params.pretrain} (fc heads re-initialised for {params.bins} bins)")
+
+    elif params.checkpoint:
         checkpoint = torch.load(params.checkpoint, map_location=device)
         model.load_state_dict(checkpoint["model_state_dict"])
         optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
