@@ -8,6 +8,9 @@ import torch
 import torch.nn.functional as F
 from torchvision import transforms
 
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from config import data_config
 from utils.helpers import get_model, draw_bbox_gaze
 

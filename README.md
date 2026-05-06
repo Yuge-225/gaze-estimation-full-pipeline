@@ -1,100 +1,169 @@
-# MobileGaze: Pre-trained mobile nets for Gaze-Estimation
+# Mobile Gaze Estimation Pipeline
 
-![Downloads](https://img.shields.io/github/downloads/yakhyo/gaze-estimation/total)
-[![GitHub Repo stars](https://img.shields.io/github/stars/yakhyo/gaze-estimation)](https://github.com/yakhyo/gaze-estimation/stargazers)
-[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/yakhyo/gaze-estimation)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14257640.svg)](https://doi.org/10.5281/zenodo.14257640)
-[![DeepWiki](https://img.shields.io/badge/DeepWiki-yakhyo%2Fgaze--estimation-blue.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAyCAYAAAAnWDnqAAAAAXNSR0IArs4c6QAAA05JREFUaEPtmUtyEzEQhtWTQyQLHNak2AB7ZnyXZMEjXMGeK/AIi+QuHrMnbChYY7MIh8g01fJoopFb0uhhEqqcbWTp06/uv1saEDv4O3n3dV60RfP947Mm9/SQc0ICFQgzfc4CYZoTPAswgSJCCUJUnAAoRHOAUOcATwbmVLWdGoH//PB8mnKqScAhsD0kYP3j/Yt5LPQe2KvcXmGvRHcDnpxfL2zOYJ1mFwrryWTz0advv1Ut4CJgf5uhDuDj5eUcAUoahrdY/56ebRWeraTjMt/00Sh3UDtjgHtQNHwcRGOC98BJEAEymycmYcWwOprTgcB6VZ5JK5TAJ+fXGLBm3FDAmn6oPPjR4rKCAoJCal2eAiQp2x0vxTPB3ALO2CRkwmDy5WohzBDwSEFKRwPbknEggCPB/imwrycgxX2NzoMCHhPkDwqYMr9tRcP5qNrMZHkVnOjRMWwLCcr8ohBVb1OMjxLwGCvjTikrsBOiA6fNyCrm8V1rP93iVPpwaE+gO0SsWmPiXB+jikdf6SizrT5qKasx5j8ABbHpFTx+vFXp9EnYQmLx02h1QTTrl6eDqxLnGjporxl3NL3agEvXdT0WmEost648sQOYAeJS9Q7bfUVoMGnjo4AZdUMQku50McDcMWcBPvr0SzbTAFDfvJqwLzgxwATnCgnp4wDl6Aa+Ax283gghmj+vj7feE2KBBRMW3FzOpLOADl0Isb5587h/U4gGvkt5v60Z1VLG8BhYjbzRwyQZemwAd6cCR5/XFWLYZRIMpX39AR0tjaGGiGzLVyhse5C9RKC6ai42ppWPKiBagOvaYk8lO7DajerabOZP46Lby5wKjw1HCRx7p9sVMOWGzb/vA1hwiWc6jm3MvQDTogQkiqIhJV0nBQBTU+3okKCFDy9WwferkHjtxib7t3xIUQtHxnIwtx4mpg26/HfwVNVDb4oI9RHmx5WGelRVlrtiw43zboCLaxv46AZeB3IlTkwouebTr1y2NjSpHz68WNFjHvupy3q8TFn3Hos2IAk4Ju5dCo8B3wP7VPr/FGaKiG+T+v+TQqIrOqMTL1VdWV1DdmcbO8KXBz6esmYWYKPwDL5b5FA1a0hwapHiom0r/cKaoqr+27/XcrS5UwSMbQAAAABJRU5ErkJggg==)](https://deepwiki.com/yakhyo/gaze-estimation)
+A research pipeline for offline gaze estimation from mobile face recordings.
+Built on top of [yakhyo/gaze-estimation](https://github.com/yakhyo/gaze-estimation) (L2CS-Net style ResNet/MobileNet models).
 
-> [!TIP]  
-> The models and functionality in this repository are **integrated into [UniFace](https://github.com/yakhyo/uniface)** — an all-in-one face analysis library.  
-> [![PyPI Version](https://img.shields.io/pypi/v/uniface.svg)](https://pypi.org/project/uniface/) [![GitHub Stars](https://img.shields.io/github/stars/yakhyo/uniface)](https://github.com/yakhyo/uniface/stargazers) [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+## Overview
 
+This project has two components:
 
-<!--
-<h5 align="center"> If you like our project, please give us a star ⭐ on GitHub for the latest updates.</h5>
--->
+1. **Data collection** — a React Native app (`GazeAppRN/`, Android) that displays calibration and validation dots on screen while recording the front camera.
+2. **Offline pipeline** — Python scripts that take a recorded session, run face-based gaze inference, fit a per-user polynomial calibration, and report accuracy.
 
-<!--
-<div align="center">
-  <img src="assets/out_video.gif">
-</div>
--->
+---
 
-<!-- <video controls autoplay loop src="https://github.com/user-attachments/assets/a3af56a9-25af-4827-b716-27f610def59a" muted="false" width="100%"></video> -->
-<div align="center">
- <img src="assets/out_gif.gif" width="100%">
- <p>
- Video by Yan Krukau: https://www.pexels.com/video/male-teacher-with-his-students-8617126/
- </p>
-</div>
+## Project Structure
 
-This project aims to perform gaze estimation using several deep learning models like ResNet, MobileNet v2, and MobileOne. It supports both classification and regression for predicting gaze direction. Built on top of [L2CS-Net](https://github.com/Ahmednull/L2CS-Net), the project includes additional pre-trained models and refined code for better performance and flexibility.
-
-## Features
-
-- [x] **ONNX Inference**: Export pytorch weights to ONNX and ONNX runtime inference.
-- [x] **ResNet**: [Deep Residual Networks](https://arxiv.org/abs/1512.03385) - Enables deeper networks with better accuracy through residual learning.
-- [x] **MobileNet v2**: [Inverted Residuals and Linear Bottlenecks](https://arxiv.org/abs/1801.04381) - Efficient model for mobile applications, balancing performance and computational cost.
-- [x] **MobileOne (s0-s4)**: [An Improved One millisecond Mobile Backbone](https://arxiv.org/abs/2206.04040) - Achieves near-instant inference times, ideal for real-time mobile applications.
-- [x] **Face Detection**: [uniface](https://github.com/yakhyo/uniface) - **Uniface** face detection library uses RetinaFace model.
-
-> [!NOTE]
-> All models are trained only on **Gaze360** dataset.
-
-## Installation
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/yakhyo/gaze-estimation.git
-cd gaze-estimation
+```
+gaze-estimation/
+├── pipeline/                   # Mobile gaze pipeline (active development)
+│   ├── gaze_utils.py           # Shared utilities: gaze model, face detector, calibration fitting
+│   ├── run_calibration.py      # Phase 1: fit calibration model, output residual plot
+│   ├── run_validation.py       # Phase 2: re-fit calibration + evaluate on held-out points
+│   └── visualizer.py           # Debug viewer: play back session video with event overlay
+│
+├── tools/                      # Standalone desktop utilities
+│   ├── inference.py            # Webcam / video gaze inference (real-time display)
+│   ├── onnx_export.py          # Export PyTorch weights → ONNX
+│   ├── onnx_inference.py       # ONNX runtime inference
+│   ├── calibration_demo.py     # Quick single-image calibration demo
+│   ├── convert_to_coreml.py    # Convert model → Core ML (iOS deployment)
+│   └── convert_resnet34_coreml.py
+│
+├── models/                     # Model architectures (ResNet, MobileNet, MobileOne)
+├── utils/                      # Dataset loaders and training helpers
+├── weights/                    # Model weight files (*.pt, *.onnx — not in git)
+├── data/                       # Training datasets (not in git)
+│   ├── Gaze360/
+│   └── MPIIFaceGaze/
+│
+├── GazeAppRN/                  # React Native data-collection app (Android)
+├── GazeData/                   # Recorded sessions (not in git — excluded by .gitignore)
+│
+├── main.py                     # Training entry point
+├── evaluate.py                 # Dataset evaluation
+├── run.sh                      # Pipeline launcher (recommended entry point)
+├── requirements.txt
+└── MobileDataPipeline.markdown # Detailed pipeline design document
 ```
 
-2. Install the required dependencies:
+> `GazeData/` is excluded from git (`.gitignore`) — session recordings are large and local-only.
+> `GazeAppRN/` is tracked by git and can be cloned normally.
+
+---
+
+## Quick Start — Pipeline
+
+All pipeline commands go through `run.sh`:
 
 ```bash
-pip install -r requirements.txt
+# 1. Verify timestamp alignment before running inference
+bash run.sh viz --session GazeData/session_xxx
+
+# 2. Calibration only (inspect residual plot)
+bash run.sh cal --session GazeData/session_xxx --weight weights/resnet34.pt
+
+# 3. Full calibration + validation (recommended)
+bash run.sh val --session GazeData/session_xxx --weight weights/resnet34.pt
 ```
 
-3. Download weight files:
+### All flags
 
-   a) Download weights from the following links:
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--session` | (required) | Path to session folder |
+| `--weight` | `weights/resnet34.pt` | Path to model weights |
+| `--dataset` | `gaze360` | Dataset config: `gaze360` or `mpiigaze` |
+| `--stride` | `1` | Process every Nth frame (e.g. `3` = 3× faster) |
+| `--skip-ms` | `1000` | ms to skip after each point_start (saccade + settling) |
+| `--end-trim-ms` | `1000` | ms to trim before each point_end (anticipatory saccade) |
+| `--verbose` | off | Enable DEBUG logging |
 
-   | Model        | PyTorch Weights                                                                                             | ONNX Weights                                                                                                        | Size    | Epochs | MAE*  |
-   | ------------ | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ----- |
-   | ResNet-18    | [resnet18.pt](https://github.com/yakhyo/gaze-estimation/releases/download/weights/resnet18.pt)               | [resnet18_gaze.onnx](https://github.com/yakhyo/gaze-estimation/releases/download/weights/resnet18_gaze.onnx)         | 43 MB   | 200    | 12.84 |
-   | ResNet-34    | [resnet34.pt](https://github.com/yakhyo/gaze-estimation/releases/download/weights/resnet34.pt)               | [resnet34_gaze.onnx](https://github.com/yakhyo/gaze-estimation/releases/download/weights/resnet34_gaze.onnx)         | 81.6 MB | 200    | 11.33 |
-   | ResNet-50    | [resnet50.pt](https://github.com/yakhyo/gaze-estimation/releases/download/weights/resnet50.pt)               | [resnet50_gaze.onnx](https://github.com/yakhyo/gaze-estimation/releases/download/weights/resnet50_gaze.onnx)         | 91.3 MB | 200    | 11.34 |
-   | MobileNet V2 | [mobilenetv2.pt](https://github.com/yakhyo/gaze-estimation/releases/download/weights/mobilenetv2.pt)         | [mobilenetv2_gaze.onnx](https://github.com/yakhyo/gaze-estimation/releases/download/weights/mobilenetv2_gaze.onnx)   | 9.59 MB | 200    | 13.07 |
-   | MobileOne S0 | [mobileone_s0_fused.pt](https://github.com/yakhyo/gaze-estimation/releases/download/weights/mobileone_s0.pt) | [mobileone_s0_gaze.onnx](https://github.com/yakhyo/gaze-estimation/releases/download/weights/mobileone_s0_gaze.onnx) | 4.8 MB  | 200    | 12.58 |
-   | MobileOne S1 | [not available](#)                                                                                          | [not available](#)                                                                                                  | xx MB   | 200    | \*    |
-   | MobileOne S2 | [not available](#)                                                                                          | [not available](#)                                                                                                  | xx MB   | 200    | \*    |
-   | MobileOne S3 | [not available](#)                                                                                          | [not available](#)                                                                                                  | xx MB   | 200    | \*    |
-   | MobileOne S4 | [not availablet](#)                                                                                         | [not available](#)                                                                                                  | xx MB   | 200    | \*    |
+### Example with MPIIFaceGaze model
 
-   '\*' - soon will be uploaded (due to limited computing resources I cannot publish rest of the weights, but you still can train them with given code).
+```bash
+bash run.sh val \
+    --session GazeData/session_xxx \
+    --weight  weights/resnet34_mpiigaze.pt \
+    --dataset mpiigaze
+```
 
-   *MAE (Mean Absolute Error) - lower values indicate better accuracy in degrees.
+---
 
-   b) Run the command below to download weights to the `weights` directory (Linux):
+## Session Folder Format
 
-   ```bash
-   # Download specific model weights
-   sh download.sh [model_name]
-   # Available models: resnet18, resnet34, resnet50, mobilenetv2, mobileone_s0
+Each recorded session from `GazeAppRN` produces:
 
-   # Example:
-   sh download.sh resnet18
-   ```
+```
+GazeData/session_<timestamp>_<id>/
+├── metadata.json               # Device info, screen size, camera fps
+├── calibration.mp4             # Face video during calibration phase
+├── calibration_events.csv      # Timestamps + target positions for each calibration dot
+├── validation.mp4              # Face video during validation phase
+└── validation_events.csv       # Timestamps + target positions for each validation dot
+```
 
-## Usage
+The pipeline uses actual video FPS from the container (not metadata), because mobile encoders often deliver a lower frame rate than the camera target (e.g. Galaxy A10 targets 30 fps but encodes at ~8.6 fps).
 
-### Datasets
+---
 
-**Note**: Datasets must be downloaded separately and organized as shown below.
+## Visualizer
 
-Dataset folder structure:
+```bash
+bash run.sh viz --session GazeData/session_xxx
+```
+
+Opens an interactive OpenCV window that plays back the face recording for each calibration point, with overlaid information to verify that video timestamps align with gaze events before running inference.
+
+**What you see on screen:**
+
+- Top-left overlay: current point index, target position (normalized + pixels), time window, playback state
+- Bottom-right: current frame timestamp in milliseconds (session-relative)
+- Bottom-left: mini schematic of the phone screen with a dot showing where the target was
+- **Blue tint overlay (start)**: "skip zone" — covers the first `skip_ms` (default 1000 ms) after each point starts. Excluded from inference because the subject's eyes are still moving from the previous target (saccade + settling).
+- **Blue tint overlay (end)**: "end trim zone" — covers the last `end_trim_ms` (default 1000 ms) before each point ends. Excluded from inference because the subject's eyes start drifting toward the next target (anticipatory saccade). The clear frames between the two blue zones are what the model actually uses.
+
+**Keyboard controls:**
+
+| Key | Action |
+|-----|--------|
+| `SPACE` | Play / pause |
+| `[` or `←` | Previous point |
+| `]` or `→` | Next point |
+| `0`–`9` | Jump directly to point 0–9 |
+| `a`–`f` | Jump directly to point 10–15 |
+| `Q` | Quit |
+
+**How to use it:**
+
+1. Run `viz` first before any inference.
+2. Press `]` to step through each calibration point.
+3. For each point: press `SPACE` to play. The clear window between the two blue zones is what gets used for inference. If the eyes are still moving when the start blue ends, increase `--skip-ms`. If the eyes start drifting before the end blue begins, increase `--end-trim-ms`.
+4. If the video jumps to a completely wrong moment, there is an FPS mismatch — check that `metadata.json` matches what `get_video_fps()` reads from the container.
+
+---
+
+## Training
+
+Models are trained with `main.py`. To train ResNet-34 on MPIIFaceGaze (recommended for screen-gaze scenarios):
+
+```bash
+python main.py \
+    --data data/MPIIFaceGaze \
+    --dataset mpiigaze \
+    --arch resnet34 \
+    --num-epochs 50 \
+    --batch-size 64
+```
+
+To resume from a checkpoint:
+
+```bash
+python main.py --data data/MPIIFaceGaze --dataset mpiigaze --arch resnet34 \
+    --checkpoint output/epoch_30.pt
+```
+
+### Dataset setup
 
 ```
 data/
@@ -106,172 +175,37 @@ data/
     └── Label/
 ```
 
-**Gaze360**
+- **Gaze360**: https://gaze360.csail.mit.edu/download.php — ±180° range, good for general gaze; coarse bins for phone screen use.
+- **MPIIFaceGaze**: https://www.mpi-inf.mpg.de/departments/computer-vision-and-machine-learning/research/gaze-based-human-computer-interaction/its-written-all-over-your-face-full-face-appearance-based-gaze-estimation — trained on screen-reading scenarios, recommended for this pipeline.
 
-- Link to download dataset: https://gaze360.csail.mit.edu/download.php
-- Data pre-processing code: https://phi-ai.buaa.edu.cn/Gazehub/3D-dataset/#gaze360
+Pre-processing scripts: https://phi-ai.buaa.edu.cn/Gazehub/3D-dataset/
 
-**MPIIGaze**
+---
 
-- Link to download dataset: [download page](https://www.mpi-inf.mpg.de/departments/computer-vision-and-machine-learning/research/gaze-based-human-computer-interaction/its-written-all-over-your-face-full-face-appearance-based-gaze-estimation)
-- Data pre-processing code: https://phi-ai.buaa.edu.cn/Gazehub/3D-dataset/#mpiifacegaze
+## Pre-trained Weights (Gaze360)
 
-### Training
+| Model | PyTorch | ONNX | MAE (°) |
+|-------|---------|------|---------|
+| ResNet-18 | [resnet18.pt](https://github.com/yakhyo/gaze-estimation/releases/download/weights/resnet18.pt) | [resnet18_gaze.onnx](https://github.com/yakhyo/gaze-estimation/releases/download/weights/resnet18_gaze.onnx) | 12.84 |
+| ResNet-34 | [resnet34.pt](https://github.com/yakhyo/gaze-estimation/releases/download/weights/resnet34.pt) | [resnet34_gaze.onnx](https://github.com/yakhyo/gaze-estimation/releases/download/weights/resnet34_gaze.onnx) | 11.33 |
+| ResNet-50 | [resnet50.pt](https://github.com/yakhyo/gaze-estimation/releases/download/weights/resnet50.pt) | [resnet50_gaze.onnx](https://github.com/yakhyo/gaze-estimation/releases/download/weights/resnet50_gaze.onnx) | 11.34 |
+| MobileNet V2 | [mobilenetv2.pt](https://github.com/yakhyo/gaze-estimation/releases/download/weights/mobilenetv2.pt) | [mobilenetv2_gaze.onnx](https://github.com/yakhyo/gaze-estimation/releases/download/weights/mobilenetv2_gaze.onnx) | 13.07 |
 
-```bash
-python main.py --data [dataset_path] --dataset [dataset_name] --arch [architecture_name]
-```
+MAE = Mean Absolute Error in degrees on Gaze360 test set.
 
-`main.py` arguments:
+---
 
-```
-usage: main.py [-h] [--data DATA] [--dataset DATASET] [--output OUTPUT] [--checkpoint CHECKPOINT] [--num-epochs NUM_EPOCHS] [--batch-size BATCH_SIZE] [--arch ARCH] [--alpha ALPHA] [--lr LR] [--num-workers NUM_WORKERS]
-
-Gaze estimation training.
-
-options:
-  -h, --help            show this help message and exit
-  --data DATA           Directory path for gaze images.
-  --dataset DATASET     Dataset name, available `gaze360`, `mpiigaze`.
-  --output OUTPUT       Path of output models.
-  --checkpoint CHECKPOINT
-                        Path to checkpoint for resuming training.
-  --num-epochs NUM_EPOCHS
-                        Maximum number of training epochs.
-  --batch-size BATCH_SIZE
-                        Batch size.
-  --arch ARCH           Network architecture, currently available: resnet18/34/50, mobilenetv2, mobileone_s0-s4.
-  --alpha ALPHA         Regression loss coefficient.
-  --lr LR               Base learning rate.
-  --num-workers NUM_WORKERS
-                        Number of workers for data loading.
-```
-
-### Evaluation
+## Environment
 
 ```bash
-python evaluate.py --data [dataset_path] --dataset [dataset_name] --weight [weight_path] --arch [architecture_name]
+conda activate DeepLearning
+# or directly:
+/opt/anaconda3/envs/DeepLearning/bin/python pipeline/run_validation.py ...
 ```
 
-`evaluate.py` arguments:
+---
 
-```
-usage: evaluate.py [-h] [--data DATA] [--dataset DATASET] [--weights WEIGHTS] [--batch-size BATCH_SIZE] [--arch ARCH] [--num-workers NUM_WORKERS]
+## Upstream
 
-Gaze estimation evaluation.
-
-options:
-  -h, --help            show this help message and exit
-  --data DATA           Directory path for gaze images.
-  --dataset DATASET     Dataset name, available `gaze360`, `mpiigaze`
-  --weights WEIGHTS     Path to model weight for evaluation.
-  --batch-size BATCH_SIZE
-                        Batch size.
-  --arch ARCH           Network architecture, currently available: resnet18/34/50, mobilenetv2, mobileone_s0-s4.
-  --num-workers NUM_WORKERS
-                        Number of workers for data loading.
-```
-
-### Inference
-
-```bash
-# Run inference on webcam (camera index 0)
-python inference.py --model resnet18 --weight weights/resnet18.pt --view --source 0
-
-# Run inference on video file
-python inference.py --model [model_name] --weight [model_weight_path] --view --source [source_video] --output [output_file] --dataset [dataset_name]
-```
-
-`inference.py` arguments:
-
-```
-usage: inference.py [-h] [--model MODEL] [--weight WEIGHT] [--view] [--source SOURCE] [--output OUTPUT] [--dataset DATASET]
-
-Gaze estimation inference
-
-options:
-  -h, --help         show this help message and exit
-  --model MODEL      Model name, default `resnet18`
-  --weight WEIGHT    Path to gaze esimation model weights
-  --view             Display the inference results
-  --source SOURCE    Path to source video file or camera index
-  --output OUTPUT    Path to save output file
-  --dataset DATASET  Dataset name to get dataset related configs
-```
-
-### ONNX Export and Inference
-
-**Export to ONNX**
-
-```bash
-python onnx_export.py --weight [model_path] --model [model_name] --dynamic
-```
-
-`onnx_export.py` arguments:
-
-```
-usage: onnx_export.py [-h] [-w WEIGHT] [-n {resnet18,resnet34,resnet50,mobilenetv2,mobileone_s0}] [-d {gaze360}] [--dynamic]
-
-Gaze Estimation Model ONNX Export
-
-options:
-  -h, --help            show this help message and exit
-  -w WEIGHT, --weight WEIGHT
-                        Trained state_dict file path to open
-  -n {resnet18,resnet34,resnet50,mobilenetv2,mobileone_s0}, --model {resnet18,resnet34,resnet50,mobilenetv2,mobileone_s0}
-                        Backbone network architecture to use
-  -d {gaze360,mpiigaze}, --dataset {gaze360,mpiigaze}
-                        Dataset name for bin configuration
-  --dynamic             Enable dynamic batch size and input dimensions for ONNX export
-```
-
-**ONNX Inference**
-
-```bash
-python onnx_inference.py --source [source video / webcam index] --model [onnx model path] --output [path to save video]
-```
-
-`onnx_inference.py` arguments:
-
-```
-usage: onnx_inference.py [-h] --source SOURCE --model MODEL [--output OUTPUT]
-
-Gaze Estimation ONNX Inference
-
-options:
-  -h, --help       show this help message and exit
-  --source SOURCE  Video path or camera index (e.g., 0 for webcam)
-  --model MODEL    Path to ONNX model
-  --output OUTPUT  Path to save output video (optional)
-```
-
-## Citation
-
-If you use this work in your research, please cite it as:
-
-Valikhujaev, Y. (2024). MobileGaze: Pre-trained mobile nets for Gaze-Estimation. Zenodo. [https://doi.org/10.5281/zenodo.14257640](https://doi.org/10.5281/zenodo.14257640)
-
-Alternatively, in BibTeX format:
-
-```bibtex
-@misc{valikhujaev2024mobilegaze,
-  author       = {Valikhujaev, Y.},
-  title        = {MobileGaze: Pre-trained mobile nets for Gaze-Estimation},
-  year         = {2024},
-  publisher    = {Zenodo},
-  doi          = {10.5281/zenodo.14257640},
-  url          = {https://doi.org/10.5281/zenodo.14257640}
-}
-```
-
-## Reference
-
-1. This project is built on top of [L2CS-Net](https://github.com/Ahmednull/L2CS-Net). Most of the code parts have been re-written for reproducibility and adaptability. Several additional backbones are provided with pre-trained weights.
-2. https://github.com/apple/ml-mobileone
-3. [uniface](https://github.com/yakhyo/uniface) - face detection library used for inference in `inference.py` and `onnx_inference.py`.
-
-<!--
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=yakhyo/gaze-estimation&type=Date)](https://star-history.com/#yakhyo/gaze-estimation&Date)
--->
+This project extends [yakhyo/gaze-estimation](https://github.com/yakhyo/gaze-estimation), which is built on [L2CS-Net](https://github.com/Ahmednull/L2CS-Net).
+Face detection uses [uniface](https://github.com/yakhyo/uniface) (RetinaFace).

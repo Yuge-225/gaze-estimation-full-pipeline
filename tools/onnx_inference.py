@@ -10,6 +10,9 @@ import onnxruntime as ort
 
 from typing import Tuple
 
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from utils.helpers import draw_bbox_gaze
 
 
